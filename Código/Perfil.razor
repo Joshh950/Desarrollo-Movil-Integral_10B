@@ -1,0 +1,142 @@
+﻿@page "/perfil"
+@attribute [Authorize]
+@using System.Linq
+@using loginv3.Services
+@using loginv3.Models
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="Index">
+        <img src="img/2.jpg" width="75" height="75" alt="Logo">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="Index">Inicio</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="Index">Colección</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="Index">Rebajas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="Perfil">Perfil</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="Login">Cerrar Sesión</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+    
+
+<h3 class="text-center mt-5">Perfil</h3>
+
+
+@if (authenticatedUser != null)
+{
+    <div class="container mt-4">
+
+        <div class="mb-4">
+            <a href="javascript:history.back()" class="btn btn-outline-dark">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+        </div>
+
+        <h4>Información </h4>
+
+        @if (updateSuccess)
+        {
+            <div class="alert alert-success text-center">Modificación exitosa.</div>
+        }
+
+        <EditForm Model="authenticatedUser" OnValidSubmit="SaveChanges">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            @if (isEditing)
+            {
+                <div class="mb-3">
+                    <label for="email" class="form-label">Correo Electrónico</label>
+                    <InputText @bind-Value="authenticatedUser.Email" id="email" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Nombre</label>
+                    <InputText @bind-Value="authenticatedUser.Name" id="name" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <InputText @bind-Value="authenticatedUser.Password" id="password" type="password" class="form-control" />
+                </div>
+
+                <button type="submit" class="btn btn-secondary">Guardar Cambios</button>
+                <button type="button" class="btn btn-outline-secondary" @onclick="CancelEdit">Cancelar</button>
+            }
+            else
+            {
+                <div class="mb-3">
+                    <label class="form-label">Correo Electrónico</label>
+                    <p class="form-control-plaintext">@authenticatedUser.Email</p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Nombre</label>
+                    <p class="form-control-plaintext">@authenticatedUser.Name</p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Contraseña</label>
+                    <p class="form-control-plaintext">********</p>
+                </div>
+
+                <button type="button" class="btn btn-secondary" @onclick="EnableEdit">Editar</button>
+            }
+
+            <button type="button" class="btn btn-outline-secondary ms-2" @onclick="DeleteAccount">Eliminar Cuenta</button>
+        </EditForm>
+    </div>
+}
+else
+{
+    <div class="alert alert-danger text-center mt-5">No se encontró el usuario autenticado.</div>
+}
+
+@code {
+    private User? authenticatedUser;
+    private bool updateSuccess = false;
+    private bool isEditing = false; 
+
+    protected override async Task OnInitializedAsync()
+    {
+        authenticatedUser = await UserService.GetAuthenticatedUserAsync();
+    }
+
+    private void EnableEdit()
+    {
+        isEditing = true;
+        updateSuccess = false; 
+    }
+
+    private void CancelEdit()
+    {
+        isEditing = false;
+        updateSuccess = false;
+    }
+
+    private async Task SaveChanges()
+    {
+        await UserService.UpdateUserAsync(authenticatedUser);
+        updateSuccess = true;
+        isEditing = false;
+    }
+
+    private async Task DeleteAccount()
+    {
+        await UserService.DeleteUserAsync(authenticatedUser.Id);
+        NavigationManager.NavigateTo("/login");
+    }
+}

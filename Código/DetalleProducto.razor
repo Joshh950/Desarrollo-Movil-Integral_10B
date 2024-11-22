@@ -1,0 +1,350 @@
+﻿@page "/DetallesProducto/{id}"
+@using System.Linq
+@inject NavigationManager NavigationManager
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="Index">
+            <img src="img/2.jpg" width="75" height="75" alt="Logo">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="Index">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="Index">Colección</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="Index">Rebajas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="Perfil">Perfil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="Login">Cerrar Sesión</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+@code {
+    [Parameter] public string id { get; set; }
+    private Product selectedProduct;
+
+    private List<Product> products = new List<Product>
+    {
+        new Product  
+        {
+            Id = "1345",
+            Name = "TOILE DE JOUY TOP DE CUELLO CUADRADO CON MANGA LARGA FRUNCIDA CROP TOP",
+            Price = 473,
+            Image = "img/coleccion.1.jpg", 
+            ColorImages = new Dictionary<string, string>
+            {
+                { "blue", "img/coleccion.1.jpg" },
+                { "green", "img/colecciongreen.1.jpg" }
+            },
+            Colors = new List<string> { "blue", "green" },
+            Description = "Un hermoso top que combina elegancia y comodidad.",
+            SizeGuide = "XS",
+            StockAvailable = 10,
+            ShippingInfo = "Envío a todo México: Método Estándar - $50 (Entrega en 5-7 días hábiles).",
+            Material = "Composición: 95% poliéster 5% elastano, Elástico: Elasticidad alta, Material: Tejido de punto",
+            Style = "Tipo de Ajuste: Regular, Forro: Sin forro, Longitud: Corto, Escote: Cuello Cuadrado",
+            DesignInfo = "Ocasión: Informal diario, Fecha, Cafetería, Tipo de patrón: Coloquial, Detalle del patrón: Gráfico, Detalle de ropa: Fruncido."
+        },
+        new Product 
+        {
+            Id = "6777",
+            Name = "VESTIDO MIDI DE SATÉN CON CUELLO EN V Y DOBLADILLO DE ENCAJE",
+            Price = 345,
+            Image = "img/coleccion.2.jpg", 
+           ColorImages = new Dictionary<string, string>
+            {
+                { "red", "img/coleccion.2.jpg" },
+                { "black", "img/coleccion2black.jpg" }
+            },
+            Colors = new List<string> { "red", "black"},
+            Description = "Vestido elegante para ocasiones especiales.",
+            SizeGuide = "M, G",
+            StockAvailable = 5,
+            ShippingInfo = "Envío a todo México: Método Estándar - $50 (Entrega en 5-7 días hábiles).",
+            Material = "Composición: 95% poliéster 5% elastano, Elástico: Elasticidad alta, Material: Satén",
+            Style = "Tipo de Ajuste: Regular, Línea de Cintura: Altura media, Almohadilla para el pecho: Sin relleno, Forro: Sin forro, Longitud: Midi, Escote: cuello en V, Bolsillo: No",
+            DesignInfo = "Ocasión: Fecha, Tipo de patrón: Sólido, Detalle de ropa: Encaje."
+        },
+        new Product 
+        {
+            Id = "7895",
+            Name = "TOP DE TIRANTES DE CUADROS VICHY CON FRUNCIDO Y ESCOTE EN V",
+            Price = 234,
+            Image = "img/coleccion.3.jpg",
+            ColorImages = new Dictionary<string, string>
+            {
+                { "red", "img/coleccion.3.jpg" },
+                { "blue", "img/coleccion3.blue.jpg" },
+                { "darkblue", "img/coleccion3dark blue.jpg" }
+            },
+            Colors = new List<string> { "red", "blue", "darkblue"},
+            Description = "Ideales para el dia de picnic o para alguna ocasion especial.",
+            SizeGuide = "XS, M, G",
+            StockAvailable = 5,
+            ShippingInfo = "Envío a todo México: Método Estándar - $50 (Entrega en 5-7 días hábiles).",
+            Material = "Coquille, Composición: 76% poliéster reciclado 20% Algodón 4% viscosa",
+            Style = "Tipo de Ajuste: Regular, Almohadilla para el pecho: Sin relleno, Forro: Sin forro, Longitud: Regular, Escote: Sweetheart.",
+            DesignInfo = "Ocasión: Vacaciones, Escuela, Tipo de patrón: Cuadros, Detalle del patrón: Tartán, Detalle de ropa: Fruncido, Cremallera."
+        },
+        new Product 
+        {
+            Id = "09564",
+            Name = "AJEANS DE DENIM SÓLIDOS",
+            Price = 780,
+            Image = "img/coleccion.4.jpg",
+            Colors = new List<string> { "dodgerblue" },
+            Description = "Pantalones tipo vaqueros comodos para el dia.",
+            SizeGuide = "M, G",
+            StockAvailable = 5,
+            ShippingInfo = "Envío a todo México: Método Estándar - $50 (Entrega en 5-7 días hábiles).",
+            Material = "Coquille, omposición: 69% Algodón 15% Poliéster 13% viscosa 3% Modal.",
+            Style = "Tipo de Ajuste: Regular, Línea de Cintura: Altura media, Estilo de Pierna del Pantalón: Pantalones Entubados, Longitud: Largo, Bolsillo: Sí",
+            DesignInfo = "Ocasión: Informal diario, Al aire libre, Escuela., Tipo de patrón: Sólido, Detalle de ropa: Bolsillo."
+        },
+        new Product  
+        {
+            Id = "4589",
+            Name = "VESTIDO MAXI CRUZADO GEOMÉTRICO",
+            Price = 638,
+            Image = "img/coleccion.5.jpg",
+            Colors = new List<string> { "with" },
+            Description = "Vestido ideal para ocasiones especiales.",
+            SizeGuide = "XS, M, G",
+            StockAvailable = 2,
+            ShippingInfo = "Envío a todo México: Método Estándar - $50 (Entrega en 5-7 días hábiles).",
+            Material = "Composición: 100% poliéster, Elástico: Ligero, Material: Satén.",
+            Style = "Tipo de Ajuste: Regular, Línea de Cintura: Altura media, Almohadilla para el pecho: Sin relleno, Forro: Sin forro, Longitud: Maxi, Escote: Cuello Drapeado, Bolsillo: No.",
+            DesignInfo = "Ocasión: Boda, Tipo de patrón: Floral, Detalle del patrón: Floral, Detalle de ropa: Abertura, Cremallera."
+        },
+        new Product  
+        {
+            Id = "9723",
+            Name = "VAQUEROS HOLGADOS BORDADOS CON FRESAS DE TIRO MEDIO DENIM CURVY",
+            Price = 645,
+            Image = "img/coleccion.6.jpg",
+            ColorImages = new Dictionary<string, string>
+            {
+                { "blue", "img/coleccion.6.jpg" },
+                { "dodgerblue", "img/coleccion6.1.1.jpg" },
+
+            },
+            Colors = new List<string> { "blue", "dodgerblue" },
+            Description = "Vaqueros Olgados para cualquier ocasion.",
+            SizeGuide = "G, XL, XG",
+            StockAvailable = 20,
+            ShippingInfo = "Envío a todo México: Método Estándar - $50 (Entrega en 5-7 días hábiles).",
+            Material = "Coquille, Composición: 85% Algodón 15% Poliéster.",
+            Style = "Tipo de Ajuste: Regular, Línea de Cintura: Altura media, Estilo de Pierna del Pantalón: Pantalones de Pierna Ancha, Longitud: Largo, Bolsillo: Sí.",
+            DesignInfo = "Ocasión: Vacaciones, Tipo de patrón: Coloquial, Detalle del patrón: Frutas y verduras, Detalle de ropa: Bordado."
+        },
+        new Product 
+        {
+            Id = "1030",
+            Name = "ESTIDO MINI DE ENCAJE FLORAL CON CUELLO CUADRADO Y LAZADA CURVY",
+            Price = 723,
+            Image = "img/coleccion.7.jpg",
+            Colors = new List<string> { "blue" },
+            Description = "Vestido elegante para ocasiones especiales.",
+            SizeGuide = "G, XG, XL",
+            StockAvailable = 5,
+            ShippingInfo = "Envío a todo México: Método Estándar - $50 (Entrega en 5-7 días hábiles).",
+            Material = "Composición: 100% poliéster, Elástico: Mediano, Material: Tejido.",
+            Style = "Tipo de Ajuste: Regular, Línea de Cintura: Altura media, Almohadilla para el pecho: Sin relleno, Forro: Forrado, Longitud: Corto, Escote: Cuello Cuadrado, Bolsillo: No",
+            DesignInfo = "Ocasión: Vacaciones, Tipo de patrón: Floral, Detalle del patrón: Floral, Detalle de ropa: Con cordones."
+        },
+        new Product  
+        {
+            Id = "1894",
+            Name = "VAQUERO DE CINTURA MEDIA CON PANTALÓN CORTO DIVIDIDO",
+            Price = 439,
+            Image = "img/coleccion.8.jpg",
+            ColorImages = new Dictionary<string, string>
+            {
+                { "denim", "img/coleccion.8.jpg" },
+                { "black", "img/coleccion8.black.jpg" },
+                { "green", "img/coleccion8green.jpg" },
+                { "with", "img/coleccion8wiht.jpg" },
+
+            },
+            Colors = new List<string> { "denim", "black", "green", "with"},
+            Description = "Falda con apertura en una pierna ideal para fiestas o salida con amigos.",
+            SizeGuide = "G",
+            StockAvailable = 5,
+            ShippingInfo = "Envío a todo México: Método Estándar - $50 (Entrega en 5-7 días hábiles).",
+            Material = "Coquille,Composición: 65% Algodón 21% viscosa 11% Poliéster 3% Modal",
+            Style = "Tipo de Ajuste: Regular, Línea de Cintura: Altura media, Estilo de Pierna del Pantalón: Regular, Longitud: Corto, Bolsillo: No",
+            DesignInfo = "Ocasión: Informal diario, Escuela., Tipo de patrón: Sólido, Detalle de ropa: Abertura."
+        },
+
+       
+    };
+
+    protected override void OnInitialized()
+    {
+        
+        selectedProduct = products.FirstOrDefault(p => p.Id == id);
+
+       
+        if (selectedProduct == null)
+        {
+            NavigationManager.NavigateTo("/index");
+        }
+    }
+
+    private class Product
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public decimal Price { get; set; }
+        public string Image { get; set; } 
+        public Dictionary<string, string> ColorImages { get; set; } 
+        public List<string> Colors { get; set; }
+        public string Description { get; set; }
+        public string SizeGuide { get; set; }
+        public int StockAvailable { get; set; }
+        public string ShippingInfo { get; set; }
+        public string Material { get; set; }
+        public string Style { get; set; }
+        public string DesignInfo { get; set; }
+    }
+
+
+    private string selectedColor; 
+
+    private void SetSelectedColor(string color)
+    {
+        selectedColor = color;
+
+        
+        if (selectedProduct.ColorImages != null && selectedProduct.ColorImages.ContainsKey(color))
+        {
+            selectedProduct.Image = selectedProduct.ColorImages[color];
+        }
+    }
+
+
+}
+<div class="container mt-5">
+
+    
+    <div class="mb-4">
+        <a href="javascript:history.back()" class="btn btn-outline-dark">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+    </div>
+
+    <div class="row">
+        
+        <div class="col-12 col-md-4 text-center mb-3 mb-md-0">
+            <img src="@selectedProduct.Image" alt="@selectedProduct.Name" class="img-fluid rounded shadow-sm" />
+        </div>
+
+        
+        <div class="col-12 col-md-8">
+            <div class="p-4 bg-light rounded shadow-sm">
+                <h3 class="text-dark fw-bold">@selectedProduct.Name</h3>
+                <p class="text-secondary"><strong>Precio:</strong> $@selectedProduct.Price</p>
+                <p class="text-muted">@selectedProduct.Description</p>
+
+               
+                <div class="mb-3">
+                    <label class="fw-semibold">Colores disponibles:</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        @if (selectedProduct.Colors != null && selectedProduct.Colors.Any())
+                        {
+                            @foreach (var color in selectedProduct.Colors)
+                            {
+                                <button class="btn border rounded-circle" style="background-color: @color; width: 32px; height: 32px;" title="@color" @onclick="() => SetSelectedColor(color)">
+                                </button>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted">No hay colores disponibles</p>
+                        }
+                    </div>
+                </div>
+
+           
+            <div class="form-group">
+                <label>Talla:</label>
+                <select class="form-control" aria-label="Talla seleccionada">
+                    <option value="xs">XS</option>
+                    <option value="M">M</option>
+                    <option value="G">G</option>
+                    <option value="XG">XG</option>
+                    <option value="XL">XL</option>
+                </select>
+            </div>
+
+            
+            <div class="form-group">
+                <p><strong>Guía de Tallas:</strong></p>
+                <p>Consulta nuestra <a href="#guia-tallas">guía de tallas</a> para encontrar la medida adecuada.</p>
+            </div>
+
+            
+            <p><strong>Stock Disponible:</strong> @selectedProduct.StockAvailable</p>
+
+            
+            <div class="form-group">
+                <p><strong>Material:</strong></p>
+                <ul>
+                    <li>@selectedProduct.Material</li>
+                </ul>
+            </div>
+
+            <div class="form-group">
+                <p><strong>Estilo:</strong></p>
+                <ul>
+                    <li>@selectedProduct.Style</li>
+                </ul>
+            </div>
+
+            <div class="form-group">
+                <p><strong>Información de Diseño:</strong></p>
+                <ul>
+                    <li>@selectedProduct.DesignInfo</li>
+                </ul>
+            </div>
+
+            <p><strong>Descripción:</strong> @selectedProduct.Description</p>
+            <p>@selectedProduct.ShippingInfo</p>
+
+            
+            <a href="/carrito" class="btn btn-dark text-white d-flex justify-content-center align-items-center" id="addToCartButton">
+                <i class="fas fa-shopping-cart" style="margin-right: 10px;"></i>
+                Añadir a la Cesta
+            </a>
+            <script>
+                    document.getElementById('addToCartButton').addEventListener('click', function (event) {
+                        event.preventDefault();
+
+                        Swal.fire({
+                            title: '¡Se añadió a tu cesta!',
+                            text: 'El producto ha sido añadido a tu cesta.',
+                            icon: 'success',
+                            confirmButtonText: 'Aceptar',
+                            
+                            customClass: {
+                                popup: 'mobile-swal'  
+                            }
+                        });
+                    });
+            </script>
+
+            </div>
+        </div>
+    </div>
+</div>

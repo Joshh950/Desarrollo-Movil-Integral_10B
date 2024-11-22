@@ -1,0 +1,67 @@
+﻿@page "/login"
+@using loginv3.Services
+@using loginv3.Models
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<h3 class="text-center mt-5">Inicio de Sesión</h3>
+
+<div class="container d-flex justify-content-center">
+    <div class="card p-4 " style="width: 400px;">
+        <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Correo Electrónico</label>
+                <InputText @bind-Value="loginModel.Email" id="email" class="form-control" placeholder="Ingresa tu correo" />
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <InputText @bind-Value="loginModel.Password" id="password" type="password" class="form-control" placeholder="Ingresa tu contraseña" />
+            </div>
+
+            <div class="d-flex justify-content-center gap-2">
+                <button type="submit" class="btn btn-secondary">Entrar</button>
+                <button type="button" class="btn btn-outline-secondary" @onclick="ClearFields">Cancelar</button>
+            </div>
+
+            <div class="text-center mt-3">
+                <p>¿No tienes una cuenta? <NavLink href="/register" class="text-primary">Regístrate aquí</NavLink></p>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@if (loginError)
+{
+    <div class="alert alert-danger text-center mt-3">El usuario no existe o la contraseña es incorrecta.</div>
+}
+
+@code {
+    private User loginModel = new User();
+    private bool loginError = false;
+
+    private async Task HandleLogin()
+    {
+        var user = await UserService.LoginAsync(loginModel.Email, loginModel.Password);
+
+        if (user != null)
+        {
+            loginError = false;
+            ((CustomAuthenticationStateProvider)AuthenticationStateProvider).MarkUserAsAuthenticated(loginModel.Email);
+            NavigationManager.NavigateTo("/index");
+        }
+        else
+        {
+            loginError = true;
+        }
+    }
+
+    private void ClearFields()
+    {
+        loginModel = new User();
+        loginError = false;
+    }
+}
